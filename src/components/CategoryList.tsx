@@ -10,8 +10,12 @@ import {
 import { List } from "lucide-react";
 import CategoryForm from "./CategoryForm";
 import ExpenseForm from "./ExpenseForm";
+import CategoryDetails from "./CategoryDetails";
+import { useState } from "react";
 
 const CategoryList = () => {
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
   const categories = [
     {
       id: 1,
@@ -36,6 +40,10 @@ const CategoryList = () => {
     },
   ];
 
+  const handleDetailsClick = (categoryId: number) => {
+    setSelectedCategory(categoryId);
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -44,7 +52,10 @@ const CategoryList = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {categories.map((category) => (
-          <Card key={category.id} className="hover:shadow-lg transition-shadow">
+          <Card 
+            key={category.id} 
+            className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800"
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <List className="h-5 w-5" />
@@ -64,23 +75,39 @@ const CategoryList = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-500">Chưa thanh toán:</span>
-                  <span className="font-medium text-red-600">{(category.total - category.paid).toLocaleString()} đ</span>
+                  <span className="font-medium text-red-600">
+                    {(category.total - category.paid).toLocaleString()} đ
+                  </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2 overflow-hidden">
                   <div 
-                    className="bg-green-600 h-2 rounded-full" 
+                    className="bg-green-600 h-2 rounded-full transition-all duration-500 ease-in-out" 
                     style={{ 
                       width: `${(category.paid / category.total) * 100}%` 
                     }}
                   />
                 </div>
                 <ExpenseForm />
-                <Button variant="outline" className="w-full">Xem chi tiết</Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={() => handleDetailsClick(category.id)}
+                >
+                  Xem chi tiết
+                </Button>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {selectedCategory && (
+        <CategoryDetails
+          open={selectedCategory !== null}
+          onOpenChange={(open) => !open && setSelectedCategory(null)}
+          category={categories.find(c => c.id === selectedCategory)!}
+        />
+      )}
     </div>
   );
 };
