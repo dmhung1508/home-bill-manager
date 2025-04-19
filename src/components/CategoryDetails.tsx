@@ -8,8 +8,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ChartBar } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 
 interface CategoryDetailsProps {
   open: boolean;
@@ -20,10 +20,15 @@ interface CategoryDetailsProps {
     description: string;
     total: number;
     paid: number;
-  };
+  } | undefined;
 }
 
 const CategoryDetails = ({ open, onOpenChange, category }: CategoryDetailsProps) => {
+  // Return early if category is undefined
+  if (!category) {
+    return null;
+  }
+  
   const chartData = [
     {
       name: "Đã thanh toán",
@@ -34,6 +39,8 @@ const CategoryDetails = ({ open, onOpenChange, category }: CategoryDetailsProps)
       amount: category.total - category.paid,
     },
   ];
+
+  const paymentPercentage = Math.round((category.paid / category.total) * 100) || 0;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -116,13 +123,13 @@ const CategoryDetails = ({ open, onOpenChange, category }: CategoryDetailsProps)
                 </div>
                 <div className="text-right">
                   <span className="text-xs font-semibold inline-block text-green-600">
-                    {Math.round((category.paid / category.total) * 100)}%
+                    {paymentPercentage}%
                   </span>
                 </div>
               </div>
               <div className="overflow-hidden h-2 mb-4 text-xs flex rounded-full bg-gray-200">
                 <div
-                  style={{ width: `${(category.paid / category.total) * 100}%` }}
+                  style={{ width: `${paymentPercentage}%` }}
                   className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500 transition-all duration-500 ease-in-out"
                 />
               </div>

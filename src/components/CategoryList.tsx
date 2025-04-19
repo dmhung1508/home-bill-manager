@@ -41,8 +41,12 @@ const CategoryList = () => {
   ];
 
   const handleDetailsClick = (categoryId: number) => {
-    setSelectedCategory(categoryId);
+    setSelectedCategory(categoryId === selectedCategory ? null : categoryId);
   };
+
+  const selectedCategoryData = selectedCategory 
+    ? categories.find(c => c.id === selectedCategory) 
+    : undefined;
 
   return (
     <div>
@@ -51,63 +55,65 @@ const CategoryList = () => {
         <CategoryForm />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((category) => (
-          <Card 
-            key={category.id} 
-            className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800"
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <List className="h-5 w-5" />
-                {category.name}
-              </CardTitle>
-              <CardDescription>{category.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Tổng chi phí:</span>
-                  <span className="font-medium">{category.total.toLocaleString()} đ</span>
+        {categories.map((category) => {
+          const paymentPercent = Math.round((category.paid / category.total) * 100);
+          return (
+            <Card 
+              key={category.id} 
+              className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800"
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <List className="h-5 w-5" />
+                  {category.name}
+                </CardTitle>
+                <CardDescription>{category.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-500">Tổng chi phí:</span>
+                    <span className="font-medium">{category.total.toLocaleString()} đ</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-500">Đã thanh toán:</span>
+                    <span className="font-medium text-green-600">{category.paid.toLocaleString()} đ</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-500">Chưa thanh toán:</span>
+                    <span className="font-medium text-red-600">
+                      {(category.total - category.paid).toLocaleString()} đ
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2 overflow-hidden">
+                    <div 
+                      className="bg-green-600 h-2 rounded-full transition-all duration-500 ease-in-out" 
+                      style={{ 
+                        width: `${paymentPercent}%` 
+                      }}
+                    />
+                  </div>
+                  <div className="text-right text-xs text-gray-500">{paymentPercent}% hoàn thành</div>
+                  <ExpenseForm />
+                  <Button 
+                    variant="outline" 
+                    className="w-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                    onClick={() => handleDetailsClick(category.id)}
+                  >
+                    Xem chi tiết
+                  </Button>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Đã thanh toán:</span>
-                  <span className="font-medium text-green-600">{category.paid.toLocaleString()} đ</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Chưa thanh toán:</span>
-                  <span className="font-medium text-red-600">
-                    {(category.total - category.paid).toLocaleString()} đ
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2 overflow-hidden">
-                  <div 
-                    className="bg-green-600 h-2 rounded-full transition-all duration-500 ease-in-out" 
-                    style={{ 
-                      width: `${(category.paid / category.total) * 100}%` 
-                    }}
-                  />
-                </div>
-                <ExpenseForm />
-                <Button 
-                  variant="outline" 
-                  className="w-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                  onClick={() => handleDetailsClick(category.id)}
-                >
-                  Xem chi tiết
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
-      {selectedCategory && (
-        <CategoryDetails
-          open={selectedCategory !== null}
-          onOpenChange={(open) => !open && setSelectedCategory(null)}
-          category={categories.find(c => c.id === selectedCategory)!}
-        />
-      )}
+      <CategoryDetails
+        open={selectedCategory !== null}
+        onOpenChange={(open) => !open && setSelectedCategory(null)}
+        category={selectedCategoryData}
+      />
     </div>
   );
 };
