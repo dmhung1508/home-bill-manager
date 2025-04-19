@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { plus } from "lucide-react";
+import { Plus } from "lucide-react"; // Fixed import
 import { useState } from "react";
 
 const CategoryForm = () => {
@@ -26,7 +26,7 @@ const CategoryForm = () => {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2">
-          <plus className="h-4 w-4" />
+          <Plus className="h-4 w-4" />
           Thêm danh mục mới
         </Button>
       </DialogTrigger>

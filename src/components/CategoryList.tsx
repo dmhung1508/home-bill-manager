@@ -17,22 +17,22 @@ const CategoryList = () => {
       id: 1,
       name: "Vật liệu xây dựng",
       description: "Gạch, xi măng, cát, đá...",
-      total: 0,
-      paid: 0,
+      total: 15000000,
+      paid: 10000000,
     },
     {
       id: 2,
       name: "Nhân công",
       description: "Chi phí nhân công xây dựng",
-      total: 0,
-      paid: 0,
+      total: 20000000,
+      paid: 15000000,
     },
     {
       id: 3,
       name: "Thiết bị",
       description: "Thiết bị điện, nước, điều hòa...",
-      total: 0,
-      paid: 0,
+      total: 25000000,
+      paid: 20000000,
     },
   ];
 
@@ -60,7 +60,19 @@ const CategoryList = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-500">Đã thanh toán:</span>
-                  <span className="font-medium">{category.paid.toLocaleString()} đ</span>
+                  <span className="font-medium text-green-600">{category.paid.toLocaleString()} đ</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-500">Chưa thanh toán:</span>
+                  <span className="font-medium text-red-600">{(category.total - category.paid).toLocaleString()} đ</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div 
+                    className="bg-green-600 h-2 rounded-full" 
+                    style={{ 
+                      width: `${(category.paid / category.total) * 100}%` 
+                    }}
+                  />
                 </div>
                 <ExpenseForm />
                 <Button variant="outline" className="w-full">Xem chi tiết</Button>
